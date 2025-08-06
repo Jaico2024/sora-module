@@ -15,8 +15,8 @@ registerProvider({
 
     doc.querySelectorAll(".anime__item").forEach(card => {
       const title = card.querySelector(".anime__item__text h5")?.textContent?.trim();
-      const url = card.querySelector("a")?.getAttribute("href");
-      const img = card.querySelector("img")?.getAttribute("src");
+      const url = card.querySelector(".anime__item__text a")?.getAttribute("href");
+      const img = card.querySelector(".anime__item__pic")?.getAttribute("data-setbg");
 
       if (title && url && img) {
         results.push({
@@ -56,7 +56,6 @@ registerProvider({
       }
     });
 
-    // Ordenar episodios por número ascendente
     episodes.sort((a, b) => a.number - b.number);
 
     return {
