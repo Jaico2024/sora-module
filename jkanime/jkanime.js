@@ -93,3 +93,32 @@ async function extractStreamUrl(url) {
     return null;
   }
 }
+
+async function extractEpisodes(url) {
+  try {
+    const res = await fetch(url);
+    const doc = new DOMParser().parseFromString(res, "text/html");
+
+    const episodes = [];
+
+    doc.querySelectorAll(".episodios li a").forEach(el => {
+      const epUrl = el.getAttribute("href");
+      const epText = el.textContent?.trim();
+      const numberMatch = epUrl.match(/-(\d+)\//);
+      const number = numberMatch ? parseInt(numberMatch[1]) : null;
+
+      if (epUrl && number !== null) {
+        episodes.push({
+          href: epUrl.startsWith("http") ? epUrl : `https://jkanime.net${epUrl}`,
+          number,
+          title: epText || `Episodio ${number}`
+        });
+      }
+    });
+
+    return JSON.stringify(episodes);
+  } catch (e) {
+    console.error("[extractEpisodes] Error:", e);
+    return JSON.stringify([]);
+  }
+}
