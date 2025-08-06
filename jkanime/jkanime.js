@@ -1,14 +1,14 @@
-registerProvider({
-  id: "jkanime",
-  name: "JKAnime",
-  type: "anime",
-  language: "es",
+/****************
+ * MAIN FUNCTIONS
+ ****************/
 
-  async search(query) {
-    const searchUrl = `https://jkanime.net/buscar/${encodeURIComponent(query)}/`;
+async function searchResults(keyword) {
+  try {
+    const searchUrl = `https://jkanime.net/buscar/${encodeURIComponent(keyword)}/`;
     const res = await fetch(searchUrl);
     const html = await res.text();
     const doc = new DOMParser().parseFromString(html, "text/html");
+
     const results = [];
 
     doc.querySelectorAll("div.let-post").forEach(post => {
@@ -21,42 +21,77 @@ registerProvider({
       if (title && url) {
         results.push({
           title,
-          url: url.startsWith("http") ? url : `https://jkanime.net${url}`,
-          poster: img || ""
+          image: img || "",
+          href: url.startsWith("http") ? url : `https://jkanime.net${url}`
         });
       }
     });
 
-    return results;
-  },
+    return JSON.stringify(results);
+  } catch (e) {
+    console.error("[searchResults] Error:", e);
+    return JSON.stringify([]);
+  }
+}
 
-  async anime(url) {
+async function extractDetails(url) {
+  try {
     const res = await fetch(url);
     const html = await res.text();
     const doc = new DOMParser().parseFromString(html, "text/html");
 
-    const title = doc.querySelector(".anime__details__title h3")?.textContent?.trim() || "Sin título";
-    const poster = doc.querySelector(".anime__details__pic img")?.getAttribute("src") || "";
     const description = doc.querySelector(".anime__details__text p")?.textContent?.trim() || "";
+    const aliases = doc.querySelector(".anime__details__title h3")?.textContent?.trim() || "";
+    const airdate = "";
+
+    return JSON.stringify([{ description, aliases, airdate }]);
+  } catch (e) {
+    console.error("[extractDetails] Error:", e);
+    return JSON.stringify([{ description: "", aliases: "", airdate: "" }]);
+  }
+}
+
+async function extractEpisodes(url) {
+  try {
+    const res = await fetch(url);
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
 
     const episodes = [];
-    doc.querySelectorAll(".episodios li a").forEach(el => {
+
+    doc.querySelectorAll(".episodios li a").forEach((el) => {
       const epUrl = el.getAttribute("href");
-      const epTitle = el.textContent?.trim();
+      const epText = el.textContent?.trim();
       const numberMatch = epUrl.match(/-(\d+)\//);
       const number = numberMatch ? parseInt(numberMatch[1]) : null;
 
       if (epUrl && number !== null) {
         episodes.push({
-          number,
-          title: epTitle || `Episodio ${number}`,
-          url: epUrl.startsWith("http") ? epUrl : `https://jkanime.net${epUrl}`
+          href: epUrl.startsWith("http") ? epUrl : `https://jkanime.net${epUrl}`,
+          number: number,
+          title: epText || `Episodio ${number}`
         });
       }
     });
 
-    episodes.sort((a, b) => a.number - b.number);
-
-    return { title, description, poster, episodes };
+    return JSON.stringify(episodes);
+  } catch (e) {
+    console.error("[extractEpisodes] Error:", e);
+    return JSON.stringify([]);
   }
-});
+}
+
+async function extractStreamUrl(url) {
+  try {
+    const res = await fetch(url);
+    const html = await res.text();
+    const iframe = html.match(/<iframe.+?src="(https:\/\/[^"]+)"/);
+    if (iframe && iframe[1]) {
+      return iframe[1];
+    }
+    return null;
+  } catch (e) {
+    console.error("[extractStreamUrl] Error:", e);
+    return null;
+  }
+}
