@@ -34,20 +34,28 @@ async function searchResults(keyword) {
 
 async function extractDetails(url) {
   try {
-    const res = await fetch(url);
-    const html = await res.text();
-    const doc = new DOMParser().parseFromString(html, "text/html");
+    const res = await fetch(url); // res es ya un string (HTML)
+    const doc = new DOMParser().parseFromString(res, "text/html");
 
     const description = doc.querySelector(".anime__details__text p")?.textContent?.trim() || "";
     const aliases = doc.querySelector(".anime__details__title h3")?.textContent?.trim() || "";
-    const airdate = "";
+    const airdate = ""; // JKAnime no tiene fecha visible directa
 
-    return JSON.stringify([{ description, aliases, airdate }]);
+    return JSON.stringify([{
+      description,
+      aliases,
+      airdate
+    }]);
   } catch (e) {
     console.error("[extractDetails] Error:", e);
-    return JSON.stringify([{ description: "", aliases: "", airdate: "" }]);
+    return JSON.stringify([{
+      description: "",
+      aliases: "",
+      airdate: ""
+    }]);
   }
 }
+
 
 async function extractEpisodes(url) {
   try {
