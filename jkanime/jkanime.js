@@ -5,23 +5,21 @@
 async function searchResults(keyword) {
   try {
     const searchUrl = `https://jkanime.net/buscar/${encodeURIComponent(keyword)}/`;
-    const res = await fetch(searchUrl);  // res ya es el HTML como string
+    const res = await fetch(searchUrl); // res es HTML directamente en Sora WebUI
     const doc = new DOMParser().parseFromString(res, "text/html");
 
     const results = [];
 
-    doc.querySelectorAll("div.let-post").forEach(post => {
-      const title = post.querySelector("h2")?.textContent?.trim();
-      const linkEl = post.querySelector("a");
-      const url = linkEl?.getAttribute("href");
-      const imgEl = post.querySelector("img");
-      const img = imgEl?.getAttribute("src");
+    doc.querySelectorAll(".anime__item").forEach(card => {
+      const title = card.querySelector(".anime__item__text h5 a")?.textContent?.trim();
+      const url = card.querySelector(".anime__item__text h5 a")?.getAttribute("href");
+      const img = card.querySelector(".anime__item__pic")?.getAttribute("data-setbg");
 
       if (title && url) {
         results.push({
           title,
-          image: img || "",
-          href: url.startsWith("http") ? url : `https://jkanime.net${url}`
+          href: url.startsWith("http") ? url : `https://jkanime.net${url}`,
+          image: img || ""
         });
       }
     });
@@ -32,6 +30,7 @@ async function searchResults(keyword) {
     return JSON.stringify([]);
   }
 }
+
 
 async function extractDetails(url) {
   try {
