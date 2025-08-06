@@ -6,23 +6,23 @@ registerProvider({
 
   async search(query) {
     const searchUrl = `https://jkanime.net/buscar/${encodeURIComponent(query)}/`;
-
     const res = await fetch(searchUrl);
     const html = await res.text();
-
     const doc = new DOMParser().parseFromString(html, "text/html");
     const results = [];
 
-    doc.querySelectorAll(".anime__item").forEach(card => {
-      const title = card.querySelector(".anime__item__text h5")?.textContent?.trim();
-      const url = card.querySelector(".anime__item__text a")?.getAttribute("href");
-      const img = card.querySelector(".anime__item__pic")?.getAttribute("data-setbg");
+    doc.querySelectorAll("div.let-post").forEach(post => {
+      const title = post.querySelector("h2")?.textContent?.trim();
+      const linkEl = post.querySelector("a");
+      const url = linkEl?.getAttribute("href");
+      const imgEl = post.querySelector("img");
+      const img = imgEl?.getAttribute("src");
 
-      if (title && url && img) {
+      if (title && url) {
         results.push({
           title,
           url: url.startsWith("http") ? url : `https://jkanime.net${url}`,
-          poster: img
+          poster: img || ""
         });
       }
     });
@@ -40,8 +40,7 @@ registerProvider({
     const description = doc.querySelector(".anime__details__text p")?.textContent?.trim() || "";
 
     const episodes = [];
-
-    doc.querySelectorAll(".episodios li a").forEach((el) => {
+    doc.querySelectorAll(".episodios li a").forEach(el => {
       const epUrl = el.getAttribute("href");
       const epTitle = el.textContent?.trim();
       const numberMatch = epUrl.match(/-(\d+)\//);
@@ -58,11 +57,6 @@ registerProvider({
 
     episodes.sort((a, b) => a.number - b.number);
 
-    return {
-      title,
-      description,
-      poster,
-      episodes
-    };
+    return { title, description, poster, episodes };
   }
 });
