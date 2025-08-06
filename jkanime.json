@@ -1,0 +1,18 @@
+{
+   "sourceName": "JKAnime",
+   "iconUrl": "https://jkanime.net/assets/images/logo.png",
+   "author": {
+       "name": "Jaico",
+       "icon": "https://pbs.twimg.com/profile_images/1899600825929924608/OZY0LWuJ_400x400.jpg"
+   },
+   "version": "1.0.0",
+   "type": "anime",
+   "language": "Spanish (SUB)",
+   "streamType": "MP4",
+   "quality": "720p",
+   "baseUrl": "https://jkanime.net/",
+   "searchBaseUrl": "https://jkanime.net/buscar/%s/",
+   "scriptUrl": "https://raw.githubusercontent.com/tu-usuario-github/tu-repo/main/jkanime/provider.js",
+   "asyncJS": true,
+   "streamAsyncJS": true
+}
