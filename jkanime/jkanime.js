@@ -89,18 +89,21 @@ async function extractEpisodes(url) {
 
 async function extractStreamUrl(url) {
   try {
-    const res = await fetch(url);
-    const html = await res.text();
-    const iframe = html.match(/<iframe.+?src="(https:\/\/[^"]+)"/);
-    if (iframe && iframe[1]) {
-      return iframe[1];
+    const res = await fetch(url); // res es HTML en string
+    const iframeMatch = res.match(/<iframe[^>]+src="([^"]+)"/);
+
+    if (iframeMatch && iframeMatch[1]) {
+      const iframeUrl = iframeMatch[1];
+      return iframeUrl;
     }
+
     return null;
   } catch (e) {
     console.error("[extractStreamUrl] Error:", e);
     return null;
   }
 }
+
 
 async function extractEpisodes(url) {
   try {
