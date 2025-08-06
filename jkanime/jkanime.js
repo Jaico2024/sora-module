@@ -116,10 +116,11 @@ async function extractStreamUrl(url) {
       body: JSON.stringify({ id: serverId })
     });
 
-    const iframeHTML = response; // en Sora, el resultado es string directamente
-    console.log("[extractStreamUrl] Respuesta del iframe:", iframeHTML.slice(0, 200)); // Muestra los primeros 200 chars
+    const iframeHTML = await response; // 🔄 CORREGIDO
+      console.log("[extractStreamUrl] Respuesta del iframe:", iframeHTML.slice(0, 200));
 
     const iframeMatch = iframeHTML.match(/<iframe[^>]+src="([^"]+)"/);
+
     if (iframeMatch && iframeMatch[1]) {
       const finalUrl = iframeMatch[1];
       console.log("[extractStreamUrl] URL final del video:", finalUrl);
