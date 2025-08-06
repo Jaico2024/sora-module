@@ -96,7 +96,7 @@ async function extractStreamUrl(url) {
 
 async function extractEpisodes(url) {
   try {
-    const res = await fetch(url);
+    const res = await fetch(url); // res ya es un string
     const doc = new DOMParser().parseFromString(res, "text/html");
 
     const episodes = [];
@@ -122,3 +122,4 @@ async function extractEpisodes(url) {
     return JSON.stringify([]);
   }
 }
+
