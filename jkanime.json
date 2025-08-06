@@ -1,9 +1,9 @@
 {
    "sourceName": "JKAnime",
-   "iconUrl": "https://jkanime.net/assets/images/logo.png",
+   "iconUrl": "https://raw.githubusercontent.com/Jaico2024/sora-module/refs/heads/main/assets/jkanime.png",
    "author": {
        "name": "Jaico",
-       "icon": "https://pbs.twimg.com/profile_images/1899600825929924608/OZY0LWuJ_400x400.jpg"
+       "icon": "https://raw.githubusercontent.com/Jaico2024/sora-module/refs/heads/main/assets/jaico.png"
    },
    "version": "1.0.0",
    "type": "anime",
