@@ -5,9 +5,8 @@
 async function searchResults(keyword) {
   try {
     const searchUrl = `https://jkanime.net/buscar/${encodeURIComponent(keyword)}/`;
-    const res = await fetch(searchUrl);
-    const html = await res.text();
-    const doc = new DOMParser().parseFromString(html, "text/html");
+    const res = await fetch(searchUrl);  // res ya es el HTML como string
+    const doc = new DOMParser().parseFromString(res, "text/html");
 
     const results = [];
 
