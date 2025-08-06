@@ -89,12 +89,40 @@ async function extractEpisodes(url) {
 
 async function extractStreamUrl(url) {
   try {
-    const res = await fetch(url); // res es HTML en string
-    const iframeMatch = res.match(/<iframe[^>]+src="([^"]+)"/);
+    const res = await fetch(url); // res es el HTML
+    const doc = new DOMParser().parseFromString(res, "text/html");
 
+    const servers = Array.from(doc.querySelectorAll(".server-item"));
+
+    // Buscar servidor StreamWish
+    let targetServer = servers.find(el => el.dataset.name?.toLowerCase().includes("streamwish"));
+
+    // Si no existe StreamWish, usar el primero disponible
+    if (!targetServer && servers.length > 0) {
+      targetServer = servers[0];
+    }
+
+    if (!targetServer) {
+      console.error("[extractStreamUrl] No se encontraron servidores.");
+      return null;
+    }
+
+    const serverId = targetServer.dataset.id;
+
+    const response = await fetch("https://jkanime.net/api/episode/iframe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ id: serverId })
+    });
+
+    // La respuesta debe ser HTML con un iframe
+    const iframeHTML = await response; // en Sora, ya es texto plano
+
+    const iframeMatch = iframeHTML.match(/<iframe[^>]+src="([^"]+)"/);
     if (iframeMatch && iframeMatch[1]) {
-      const iframeUrl = iframeMatch[1];
-      return iframeUrl;
+      return iframeMatch[1];
     }
 
     return null;
@@ -103,6 +131,7 @@ async function extractStreamUrl(url) {
     return null;
   }
 }
+
 
 
 async function extractEpisodes(url) {
