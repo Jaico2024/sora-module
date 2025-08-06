@@ -12,7 +12,7 @@
    "quality": "720p",
    "baseUrl": "https://jkanime.net/",
    "searchBaseUrl": "https://jkanime.net/buscar/%s/",
-   "scriptUrl": "https://raw.githubusercontent.com/tu-usuario-github/tu-repo/main/jkanime/provider.js",
+   "scriptUrl": "https://raw.githubusercontent.com/Jaico2024/sora-module/refs/heads/main/jkanime/provider.js",
    "asyncJS": true,
    "streamAsyncJS": true
 }
