@@ -89,15 +89,13 @@ async function extractEpisodes(url) {
 
 async function extractStreamUrl(url) {
   try {
-    const res = await fetch(url); // res es el HTML
+    const res = await fetch(url); // HTML directo
     const doc = new DOMParser().parseFromString(res, "text/html");
 
     const servers = Array.from(doc.querySelectorAll(".server-item"));
 
-    // Buscar servidor StreamWish
     let targetServer = servers.find(el => el.dataset.name?.toLowerCase().includes("streamwish"));
 
-    // Si no existe StreamWish, usar el primero disponible
     if (!targetServer && servers.length > 0) {
       targetServer = servers[0];
     }
@@ -108,29 +106,32 @@ async function extractStreamUrl(url) {
     }
 
     const serverId = targetServer.dataset.id;
+    console.log("[extractStreamUrl] Usando servidor con ID:", serverId);
 
     const response = await fetch("https://jkanime.net/api/episode/iframe", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: serverId })
     });
 
-    // La respuesta debe ser HTML con un iframe
-    const iframeHTML = await response; // en Sora, ya es texto plano
+    const iframeHTML = response; // en Sora, el resultado es string directamente
+    console.log("[extractStreamUrl] Respuesta del iframe:", iframeHTML.slice(0, 200)); // Muestra los primeros 200 chars
 
     const iframeMatch = iframeHTML.match(/<iframe[^>]+src="([^"]+)"/);
     if (iframeMatch && iframeMatch[1]) {
-      return iframeMatch[1];
+      const finalUrl = iframeMatch[1];
+      console.log("[extractStreamUrl] URL final del video:", finalUrl);
+      return finalUrl;
+    } else {
+      console.error("[extractStreamUrl] No se encontró el iframe en la respuesta.");
+      return null;
     }
-
-    return null;
   } catch (e) {
     console.error("[extractStreamUrl] Error:", e);
     return null;
   }
 }
+
 
 
 
