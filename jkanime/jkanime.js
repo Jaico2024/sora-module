@@ -59,13 +59,12 @@ async function extractDetails(url) {
 
 async function extractEpisodes(url) {
   try {
-    const res = await fetch(url); // HTML string directamente
+    const res = await fetch(url);
     const doc = new DOMParser().parseFromString(res, "text/html");
 
     const episodes = [];
 
-    // Corrección: Usamos el contenedor correcto basado en el HTML analizado
-    doc.querySelectorAll("#episodes-content li a").forEach(el => {
+    doc.querySelectorAll("li.list-episode-item a").forEach(el => {
       const epUrl = el.getAttribute("href");
       const epText = el.querySelector("h5")?.textContent?.trim();
       const numberMatch = epUrl.match(/\/(\d+)\//);
@@ -87,6 +86,7 @@ async function extractEpisodes(url) {
     return JSON.stringify([]);
   }
 }
+
 
 
 
