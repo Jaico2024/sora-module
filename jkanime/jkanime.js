@@ -64,9 +64,9 @@ async function extractEpisodes(url) {
 
     const episodes = [];
 
-    doc.querySelectorAll(".episodios ul li a").forEach(el => {
+    doc.querySelectorAll("#episodes-content ul.list-episode li a").forEach(el => {
       const epUrl = el.getAttribute("href");
-      const epText = el.querySelector("span")?.textContent?.trim();
+      const epText = el.querySelector("h5")?.textContent?.trim();
       const numberMatch = epUrl?.match(/\/(\d+)(\/|$)/);
       const number = numberMatch ? parseInt(numberMatch[1]) : null;
 
