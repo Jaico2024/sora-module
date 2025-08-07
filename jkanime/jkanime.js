@@ -56,7 +56,6 @@ async function extractDetails(url) {
   }
 }
 
-
 async function extractEpisodes(url) {
   try {
     const res = await fetch(url);
@@ -64,17 +63,16 @@ async function extractEpisodes(url) {
 
     const episodes = [];
 
-    doc.querySelectorAll("#episodes-content ul.list-episode li a").forEach(el => {
-      const epUrl = el.getAttribute("href");
-      const epText = el.querySelector("h5")?.textContent?.trim();
-      const numberMatch = epUrl?.match(/\/(\d+)(\/|$)/);
-      const number = numberMatch ? parseInt(numberMatch[1]) : null;
+    doc.querySelectorAll("#episodes-content .epcontent").forEach(el => {
+      const epUrl = el.querySelector("a")?.getAttribute("href");
+      const epTitle = el.querySelector(".cap_num span")?.textContent?.trim();
+      const number = el.dataset.number ? parseInt(el.dataset.number) : null;
 
       if (epUrl && number !== null) {
         episodes.push({
           href: epUrl.startsWith("http") ? epUrl : `https://jkanime.net${epUrl}`,
           number,
-          title: epText || `Episodio ${number}`
+          title: epTitle || `Episodio ${number}`
         });
       }
     });
@@ -86,10 +84,6 @@ async function extractEpisodes(url) {
     return JSON.stringify([]);
   }
 }
-
-
-
-
 
 
 async function extractStreamUrl(url) {
