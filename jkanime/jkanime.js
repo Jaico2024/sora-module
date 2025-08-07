@@ -67,7 +67,7 @@ async function extractEpisodes(url) {
     doc.querySelectorAll("li.list-episode-item a").forEach(el => {
       const epUrl = el.getAttribute("href");
       const epText = el.querySelector("h5")?.textContent?.trim();
-      const numberMatch = epUrl.match(/\/(\d+)\//);
+      const numberMatch = epUrl.match(/\/(\d+)(\/|$)/);
       const number = numberMatch ? parseInt(numberMatch[1]) : null;
 
       if (epUrl && number !== null) {
@@ -93,11 +93,10 @@ async function extractEpisodes(url) {
 
 async function extractStreamUrl(url) {
   try {
-    const res = await fetch(url); // HTML directo
+    const res = await fetch(url);
     const doc = new DOMParser().parseFromString(res, "text/html");
 
     const servers = Array.from(doc.querySelectorAll(".server-item"));
-
     let targetServer = servers.find(el => el.dataset.name?.toLowerCase().includes("streamwish"));
 
     if (!targetServer && servers.length > 0) {
@@ -118,11 +117,10 @@ async function extractStreamUrl(url) {
       body: JSON.stringify({ id: serverId })
     });
 
-    const iframeHTML = await response; // 🔄 CORREGIDO
-      console.log("[extractStreamUrl] Respuesta del iframe:", iframeHTML.slice(0, 200));
+    const iframeHTML = await response.text(); // ✅ CORREGIDO AQUÍ
+    console.log("[extractStreamUrl] Respuesta del iframe:", iframeHTML.slice(0, 200));
 
     const iframeMatch = iframeHTML.match(/<iframe[^>]+src="([^"]+)"/);
-
     if (iframeMatch && iframeMatch[1]) {
       const finalUrl = iframeMatch[1];
       console.log("[extractStreamUrl] URL final del video:", finalUrl);
@@ -136,6 +134,7 @@ async function extractStreamUrl(url) {
     return null;
   }
 }
+
 
 
 
