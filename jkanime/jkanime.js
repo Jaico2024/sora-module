@@ -64,10 +64,10 @@ async function extractEpisodes(url) {
 
     const episodes = [];
 
-    doc.querySelectorAll("li.list-episode-item a").forEach(el => {
+    doc.querySelectorAll(".episodios ul li a").forEach(el => {
       const epUrl = el.getAttribute("href");
-      const epText = el.querySelector("h5")?.textContent?.trim();
-      const numberMatch = epUrl.match(/\/(\d+)(\/|$)/);
+      const epText = el.querySelector("span")?.textContent?.trim();
+      const numberMatch = epUrl?.match(/\/(\d+)(\/|$)/);
       const number = numberMatch ? parseInt(numberMatch[1]) : null;
 
       if (epUrl && number !== null) {
@@ -86,6 +86,7 @@ async function extractEpisodes(url) {
     return JSON.stringify([]);
   }
 }
+
 
 
 
