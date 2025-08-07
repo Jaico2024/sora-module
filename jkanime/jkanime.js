@@ -59,7 +59,10 @@ async function extractDetails(url) {
 async function extractEpisodes(url) {
   try {
     const res = await fetch(url);
-    const doc = new DOMParser().parseFromString(res, "text/html");
+    const html = res; // Sora ya lo trata como texto directamente
+    console.log("[extractEpisodes] HTML:", html.slice(0, 500)); // ✅ Ahora sí
+
+    const doc = new DOMParser().parseFromString(html, "text/html");
 
     const episodes = [];
 
@@ -84,6 +87,7 @@ async function extractEpisodes(url) {
     return JSON.stringify([]);
   }
 }
+
 
 
 async function extractStreamUrl(url) {
